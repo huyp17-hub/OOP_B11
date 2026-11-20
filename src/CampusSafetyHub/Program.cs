@@ -10,7 +10,7 @@ namespace CampusSafetyHub;
 /// <summary>
 /// Điểm vào của chương trình Campus Safety Hub.
 /// Hiện tại mới demo phần Adapter; kịch bản demo đầy đủ và bộ test
-/// sẽ được bổ sung ở các task sau.
+/// sẽ được bổ sung ở các task sau (Ngày 2 và Ngày 3).
 /// </summary>
 internal static class Program
 {
