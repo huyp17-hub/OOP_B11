@@ -1,0 +1,62 @@
+
+================================================================
+1. Adapter: đọc cảm biến khói đời cũ qua giao diện chuẩn
+================================================================
+Cảm biến cũ mức 735 → đọc qua ISensor: 73.5% smoke
+
+================================================================
+2. Dựng hệ thống giám sát và ứng phó
+================================================================
+Đã gắn 4 observer vào monitor.
+
+================================================================
+3. Khói 30% → dưới ngưỡng, không cảnh báo
+================================================================
+→ Không phát cảnh báo (dưới ngưỡng).
+
+================================================================
+4. Khói 55% → WARNING (Dashboard, Email, Audit nhận; bridge bỏ qua)
+================================================================
+[DASHBOARD] SmokeSensor-01: 55.0% smoke [WARNING]
+[EMAIL] To: truongphong@campus.edu | Subject: [WARNING] SmokeSensor-01 | 55.0% smoke lúc 23:06:02
+[AUDIT] 23:06:02 SmokeSensor-01 55.0% smoke [WARNING]
+
+================================================================
+5. Khói 82% → CRITICAL (tất cả nhận; mediator bật còi, mở cửa, tắt thông gió)
+================================================================
+[DASHBOARD] SmokeSensor-01: 82.0% smoke [CRITICAL]
+[EMAIL] To: truongphong@campus.edu | Subject: [CRITICAL] SmokeSensor-01 | 82.0% smoke lúc 23:06:02
+[AUDIT] 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+[MEDIATOR] FIRE_DETECTED from EmergencyBridgeObserver
+[ALARM] Còi báo động BẬT
+[DOOR] Mở khóa toàn bộ cửa thoát hiểm
+[VENT] Tắt hệ thống thông gió để khói không lan
+
+================================================================
+6. Gỡ EmailAlertObserver rồi đọc lại 82% → không còn dòng EMAIL
+================================================================
+Số observer sau khi gỡ: 3
+[DASHBOARD] SmokeSensor-01: 82.0% smoke [CRITICAL]
+[AUDIT] 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+[MEDIATOR] FIRE_DETECTED từ EmergencyBridgeObserver: đã xử lý, bỏ qua.
+
+================================================================
+7. Attach cùng một observer hai lần → số observer không tăng
+================================================================
+Trước: 3
+Sau khi Attach lại dashboard: 3
+
+================================================================
+8. Bảo vệ an ninh tắt còi → mediator khóa cửa, bật lại thông gió
+================================================================
+[ALARM] Còi báo động TẮT
+[MEDIATOR] ALARM_RESET
+[DOOR] Khóa lại toàn bộ cửa
+[VENT] Bật lại hệ thống thông gió
+
+================================================================
+9. Toàn bộ nhật ký Audit
+================================================================
+  - 23:06:02 SmokeSensor-01 55.0% smoke [WARNING]
+  - 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+  - 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
