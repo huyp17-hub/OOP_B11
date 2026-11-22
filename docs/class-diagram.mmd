@@ -1,0 +1,150 @@
+classDiagram
+    direction LR
+
+    %% ----------------- Adapter -----------------
+    class ISensor {
+        <<interface>>
+        +ReadValue() double
+        +GetUnit() string
+    }
+    class LegacySmokeDetector {
+        -int _smokeLevel
+        +GetSmokeLevel() int
+        +SetSmokeLevel(int) void
+        +GetDescription() string
+    }
+    class SmokeSensorAdapter {
+        <<sealed>>
+        -LegacySmokeDetector _legacyDetector
+        +ReadValue() double
+        +GetUnit() string
+    }
+
+    %% ----------------- Alerts ------------------
+    class AlertEvent {
+        <<record>>
+        +string SensorName
+        +double Value
+        +string Unit
+        +string Severity
+        +DateTime OccurredAt
+    }
+    class AlertSeverity {
+        <<static>>
+        +string Warning
+        +string Critical
+    }
+    class AlertThresholds {
+        <<sealed>>
+        +double WarningThreshold
+        +double CriticalThreshold
+        +Classify(double) string
+    }
+
+    %% --------------- Monitoring ----------------
+    class IAlertObserver {
+        <<interface>>
+        +Update(AlertEvent) void
+    }
+    class SensorMonitor {
+        <<sealed>>
+        -List~IAlertObserver~ _observers
+        -AlertThresholds _thresholds
+        +int ObserverCount
+        +Attach(IAlertObserver) void
+        +Detach(IAlertObserver) bool
+        +CheckSensor(string, ISensor) AlertEvent
+    }
+
+    %% ---------------- Observers ----------------
+    class DashboardObserver {
+        <<sealed>>
+        +Update(AlertEvent) void
+    }
+    class EmailAlertObserver {
+        <<sealed>>
+        -string _to
+        -string _minSeverity
+        +Update(AlertEvent) void
+    }
+    class AuditLogObserver {
+        <<sealed>>
+        +IReadOnlyList~string~ Entries
+        +Update(AlertEvent) void
+    }
+    class EmergencyBridgeObserver {
+        <<sealed>>
+        -IEmergencyMediator _mediator
+        +Update(AlertEvent) void
+    }
+
+    %% ---------------- Emergency ----------------
+    class EmergencyEvents {
+        <<static>>
+        +string FireDetected
+        +string AlarmReset
+    }
+    class IEmergencyMediator {
+        <<interface>>
+        +Notify(object, string) void
+    }
+    class EmergencyComponent {
+        <<abstract>>
+        #IEmergencyMediator Mediator
+        +SetMediator(IEmergencyMediator) void
+    }
+    class EmergencyMediator {
+        <<sealed>>
+        -Alarm _alarm
+        -DoorController _door
+        -VentilationController _ventilation
+        -bool _fireActive
+        +Notify(object, string) void
+    }
+    class Alarm {
+        <<sealed>>
+        +bool IsActive
+        +Activate() void
+        +Reset() void
+    }
+    class DoorController {
+        <<sealed>>
+        +bool IsUnlocked
+        +UnlockAll() void
+        +LockAll() void
+    }
+    class VentilationController {
+        <<sealed>>
+        +bool IsRunning
+        +Shutdown() void
+        +Resume() void
+    }
+
+    %% ---------------- Quan hệ ------------------
+    SmokeSensorAdapter ..|> ISensor : realization
+    SmokeSensorAdapter o-- LegacySmokeDetector : chứa (object adapter)
+
+    DashboardObserver ..|> IAlertObserver
+    EmailAlertObserver ..|> IAlertObserver
+    AuditLogObserver ..|> IAlertObserver
+    EmergencyBridgeObserver ..|> IAlertObserver
+
+    SensorMonitor o-- "0..*" IAlertObserver : quan sát
+    SensorMonitor ..> AlertThresholds : «use»
+    SensorMonitor ..> ISensor : «use»
+    SensorMonitor ..> AlertEvent : «create»
+    AlertThresholds ..> AlertSeverity : «use»
+
+    EmergencyBridgeObserver --> IEmergencyMediator : gọi Notify
+    EmergencyBridgeObserver ..> EmergencyEvents : «use»
+    EmergencyMediator ..|> IEmergencyMediator
+    EmergencyComponent --> IEmergencyMediator : giữ tham chiếu
+
+    Alarm --|> EmergencyComponent
+    DoorController --|> EmergencyComponent
+    VentilationController --|> EmergencyComponent
+
+    EmergencyMediator o-- Alarm
+    EmergencyMediator o-- DoorController
+    EmergencyMediator o-- VentilationController
+    EmergencyMediator ..> EmergencyEvents : «use»

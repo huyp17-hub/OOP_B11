@@ -1,0 +1,42 @@
+sequenceDiagram
+    autonumber
+    actor Op as Chương trình (demo)
+    participant Legacy as LegacySmokeDetector
+    participant Adapter as SmokeSensorAdapter
+    participant Monitor as SensorMonitor
+    participant Thr as AlertThresholds
+    participant Dash as DashboardObserver
+    participant Mail as EmailAlertObserver
+    participant Audit as AuditLogObserver
+    participant Bridge as EmergencyBridgeObserver
+    participant Med as EmergencyMediator
+    participant Alarm as Alarm
+    participant Door as DoorController
+    participant Vent as VentilationController
+
+    Op->>Legacy: SetSmokeLevel(820)
+    Op->>Monitor: CheckSensor("SmokeSensor-01", adapter)
+    Monitor->>Adapter: ReadValue()
+    Adapter->>Legacy: GetSmokeLevel()
+    Legacy-->>Adapter: 820
+    Adapter-->>Monitor: 82.0 (820 / 10)
+    Monitor->>Thr: Classify(82.0)
+    Thr-->>Monitor: "CRITICAL"
+    Note over Monitor: tạo AlertEvent bất biến rồi Notify từng observer
+
+    Monitor->>Dash: Update(event)
+    Dash-->>Monitor: in [DASHBOARD]
+    Monitor->>Mail: Update(event)
+    Mail-->>Monitor: in [EMAIL]
+    Monitor->>Audit: Update(event)
+    Audit-->>Monitor: ghi log [AUDIT]
+    Monitor->>Bridge: Update(event)
+
+    Note over Bridge: Severity == CRITICAL
+    Bridge->>Med: Notify(this, "FIRE_DETECTED")
+    Med->>Alarm: Activate()
+    Med->>Door: UnlockAll()
+    Med->>Vent: Shutdown()
+    Med-->>Bridge: xong
+    Bridge-->>Monitor: xong
+    Monitor-->>Op: AlertEvent (CRITICAL)
