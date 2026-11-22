@@ -30,7 +30,6 @@ dotnet run --project src/CampusSafetyHub -- test
 /
 ├─ CampusSafetyHub.sln
 ├─ README.md
-├─ CLAUDE_TASKS.md
 ├─ docs/
 │  ├─ class-diagram.mmd        # sơ đồ lớp (Mermaid)
 │  ├─ sequence-fire.mmd        # sơ đồ tuần tự luồng cháy (Mermaid)
