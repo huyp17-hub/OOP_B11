@@ -8,6 +8,7 @@ using CampusSafetyHub.Emergency;
 using CampusSafetyHub.Monitoring;
 using CampusSafetyHub.Observers;
 using CampusSafetyHub.Sensors;
+using CampusSafetyHub.Tests;
 
 namespace CampusSafetyHub;
 
@@ -25,8 +26,7 @@ internal static class Program
     {
         if (args.Length > 0 && args[0].Equals("test", StringComparison.OrdinalIgnoreCase))
         {
-            Console.WriteLine("Bộ test chưa có (sẽ bổ sung ở Ngày 3).");
-            return 0;
+            return TestRunner.Run();
         }
 
         RunDemo();

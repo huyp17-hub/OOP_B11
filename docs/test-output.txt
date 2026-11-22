@@ -1,0 +1,20 @@
+================================================================
+BỘ KIỂM THỬ CAMPUS SAFETY HUB
+================================================================
+[PASS] T1: Adapter: mức 735 → 73.5, đơn vị '% smoke'
+[PASS] T2: Adapter đọc theo thời gian thực (không sao chép trạng thái)
+[PASS] T3: Adapter: biên 0→0, 1000→100; null ctor → ArgumentNullException
+[PASS] T4: Phân loại ngưỡng: 49.9 none, 50 WARNING, 69.9 WARNING, 70 CRITICAL
+[PASS] T5: Attach hai lần cùng observer → nhận một lần, ObserverCount = 1
+[PASS] T6: Detach thì không nhận nữa; Detach observer chưa đăng ký không lỗi
+[PASS] T7: Observer tự Detach chính mình khi nhận → không lỗi, observer khác vẫn nhận
+[PASS] T8: Một observer ném exception → observer còn lại vẫn nhận, có log lỗi
+[PASS] T9: AlertEvent bất biến; hai observer nhận cùng một đối tượng
+[PASS] T10: Bridge: WARNING không gọi mediator; CRITICAL gọi FIRE_DETECTED
+[PASS] T11: Mediator: FIRE_DETECTED → còi bật, cửa mở, thông gió tắt
+[PASS] T12: Mediator: Alarm.Reset() → còi tắt, cửa khóa, thông gió chạy; Alarm không có field DoorController
+[PASS] T13: Mediator: sự kiện lạ không đổi trạng thái; FIRE_DETECTED lặp lại không bật còi lần nữa
+[PASS] T14: Tích hợp: khói 820 đi từ đầu đến cuối → 4 observer nhận, mediator xử lý đúng
+================================================================
+TỔNG KẾT: 14 PASS, 0 FAIL / 14 test.
+================================================================

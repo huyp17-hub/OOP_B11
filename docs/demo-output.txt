@@ -18,15 +18,15 @@ Cảm biến cũ mức 735 → đọc qua ISensor: 73.5% smoke
 4. Khói 55% → WARNING (Dashboard, Email, Audit nhận; bridge bỏ qua)
 ================================================================
 [DASHBOARD] SmokeSensor-01: 55.0% smoke [WARNING]
-[EMAIL] To: truongphong@campus.edu | Subject: [WARNING] SmokeSensor-01 | 55.0% smoke lúc 23:06:02
-[AUDIT] 23:06:02 SmokeSensor-01 55.0% smoke [WARNING]
+[EMAIL] To: truongphong@campus.edu | Subject: [WARNING] SmokeSensor-01 | 55.0% smoke lúc 17:47:14
+[AUDIT] 17:47:14 SmokeSensor-01 55.0% smoke [WARNING]
 
 ================================================================
 5. Khói 82% → CRITICAL (tất cả nhận; mediator bật còi, mở cửa, tắt thông gió)
 ================================================================
 [DASHBOARD] SmokeSensor-01: 82.0% smoke [CRITICAL]
-[EMAIL] To: truongphong@campus.edu | Subject: [CRITICAL] SmokeSensor-01 | 82.0% smoke lúc 23:06:02
-[AUDIT] 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+[EMAIL] To: truongphong@campus.edu | Subject: [CRITICAL] SmokeSensor-01 | 82.0% smoke lúc 17:47:14
+[AUDIT] 17:47:14 SmokeSensor-01 82.0% smoke [CRITICAL]
 [MEDIATOR] FIRE_DETECTED from EmergencyBridgeObserver
 [ALARM] Còi báo động BẬT
 [DOOR] Mở khóa toàn bộ cửa thoát hiểm
@@ -37,7 +37,7 @@ Cảm biến cũ mức 735 → đọc qua ISensor: 73.5% smoke
 ================================================================
 Số observer sau khi gỡ: 3
 [DASHBOARD] SmokeSensor-01: 82.0% smoke [CRITICAL]
-[AUDIT] 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+[AUDIT] 17:47:14 SmokeSensor-01 82.0% smoke [CRITICAL]
 [MEDIATOR] FIRE_DETECTED từ EmergencyBridgeObserver: đã xử lý, bỏ qua.
 
 ================================================================
@@ -57,6 +57,6 @@ Sau khi Attach lại dashboard: 3
 ================================================================
 9. Toàn bộ nhật ký Audit
 ================================================================
-  - 23:06:02 SmokeSensor-01 55.0% smoke [WARNING]
-  - 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
-  - 23:06:02 SmokeSensor-01 82.0% smoke [CRITICAL]
+  - 17:47:14 SmokeSensor-01 55.0% smoke [WARNING]
+  - 17:47:14 SmokeSensor-01 82.0% smoke [CRITICAL]
+  - 17:47:14 SmokeSensor-01 82.0% smoke [CRITICAL]
