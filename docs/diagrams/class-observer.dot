@@ -1,0 +1,47 @@
+digraph G {
+  graph [rankdir=BT, fontname="DejaVu Sans", nodesep=0.4, ranksep=0.7, bgcolor="white", pad=0.25, dpi=200];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#3a3a3a"];
+
+  Monitor [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ee" color="#2e7d4f">
+      <tr><td><i>«sealed» «Subject»</i><br/><b>SensorMonitor</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _observers : List&lt;IAlertObserver&gt;<br align="left"/>- _thresholds : AlertThresholds<br align="left"/>- _errorWriter : TextWriter<br align="left"/>+ ObserverCount : int<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Attach(observer) : void<br align="left"/>+ Detach(observer) : bool<br align="left"/>+ CheckSensor(name, sensor : ISensor) : AlertEvent?<br align="left"/>- Notify(alertEvent) : void<br align="left"/></td></tr></table>>];
+  IAlertObserver [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface» «Observer»</i><br/><b>IAlertObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent : AlertEvent) : void<br align="left"/></td></tr></table>>];
+  Thresholds [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>AlertThresholds</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ WarningThreshold : double = 50<br align="left"/>+ CriticalThreshold : double = 70<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Classify(value : double) : string?<br align="left"/></td></tr></table>>];
+  Severity [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«static»</i><br/><b>AlertSeverity</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Warning = "WARNING"<br align="left"/>+ Critical = "CRITICAL"<br align="left"/></td></tr></table>>];
+  AlertEvent [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ee" color="#2e7d4f">
+      <tr><td><i>«sealed record»</i><br/><b>AlertEvent</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SensorName : string<br align="left"/>+ Value : double<br align="left"/>+ Unit : string<br align="left"/>+ Severity : string<br align="left"/>+ OccurredAt : DateTime<br align="left"/></td></tr></table>>];
+  Dashboard [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>DashboardObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  Email [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>EmailAlertObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _to : string<br align="left"/>- _minSeverity : string<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  Audit [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>AuditLogObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Entries : IReadOnlyList&lt;string&gt;<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  Bridge [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f3eefc" color="#5b3fa8">
+      <tr><td><i>«sealed»</i><br/><b>EmergencyBridgeObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _mediator : IEmergencyMediator<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  Monitor -> Thresholds [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Monitor -> AlertEvent [style=dashed, arrowhead=vee, label="«create»"];
+  Monitor -> IAlertObserver [arrowtail=odiamond, dir=back, arrowhead=vee, label="0..*"];
+  Thresholds -> Severity [style=dashed, arrowhead=vee, label="«use»"];
+  Dashboard -> IAlertObserver [style=dashed, arrowhead=empty];
+  Email -> IAlertObserver [style=dashed, arrowhead=empty];
+  Audit -> IAlertObserver [style=dashed, arrowhead=empty];
+  Bridge -> IAlertObserver [style=dashed, arrowhead=empty];
+
+}

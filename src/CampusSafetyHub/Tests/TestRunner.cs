@@ -1,4 +1,4 @@
-/*************************************************
+﻿/*************************************************
 Mã sinh viên: 202418915
 Họ tên:       Phạm Quốc Huy
 *************************************************/
@@ -69,7 +69,7 @@ public static class TestRunner
     /// <summary>T2 – Đổi giá trị trên lớp cũ thì adapter đọc ra ngay (không lưu bản sao).</summary>
     private static void T2()
     {
-        LegacySmokeDetector legacy = new();
+        LegacySmokeDetector legacy = new(0);
         ISensor sensor = new SmokeSensorAdapter(legacy);
         legacy.SetSmokeLevel(400);
         AssertDouble(40.0, sensor.ReadValue(), "ReadValue sau khi đổi 400");
@@ -239,7 +239,7 @@ public static class TestRunner
     /// <summary>T14 – Dòng chảy tích hợp đầy đủ với khói 820 (82%).</summary>
     private static void T14()
     {
-        LegacySmokeDetector legacy = new();
+        LegacySmokeDetector legacy = new(0);
         legacy.SetSmokeLevel(820);
         ISensor sensor = new SmokeSensorAdapter(legacy);
 
@@ -292,7 +292,7 @@ public static class TestRunner
     /// <summary>Tạo adapter bọc một cảm biến cũ đặt sẵn ở mức cho trước.</summary>
     private static ISensor AdapterAt(int legacyLevel)
     {
-        LegacySmokeDetector legacy = new();
+        LegacySmokeDetector legacy = new(0);
         legacy.SetSmokeLevel(legacyLevel);
         return new SmokeSensorAdapter(legacy);
     }

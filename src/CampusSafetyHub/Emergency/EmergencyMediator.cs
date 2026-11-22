@@ -82,7 +82,7 @@ public sealed class EmergencyMediator : IEmergencyMediator
         }
 
         _fireActive = true;
-        Console.WriteLine($"[MEDIATOR] FIRE_DETECTED from {sender.GetType().Name}");
+        Console.WriteLine($"[MEDIATOR] FIRE_DETECTED từ {sender.GetType().Name}");
         _alarm.Activate();
         _door.UnlockAll();
         _ventilation.Shutdown();

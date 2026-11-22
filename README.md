@@ -32,6 +32,7 @@ dotnet run --project src/CampusSafetyHub -- test
 ├─ README.md
 ├─ docs/
 │  ├─ class-diagram.mmd        # sơ đồ lớp (Mermaid)
+│  ├─ class-diagram.dot        # sơ đồ lớp chi tiết (Graphviz), xuất ra class-diagram.png
 │  ├─ sequence-fire.mmd        # sơ đồ tuần tự luồng cháy (Mermaid)
 │  ├─ demo-output.txt          # kết quả chạy demo
 │  ├─ test-output.txt          # kết quả chạy test
@@ -51,7 +52,7 @@ dotnet run --project src/CampusSafetyHub -- test
 
 ### 3.1. Sơ đồ lớp
 
-Ảnh PNG nằm ở `docs/class-diagram.png` (xuất từ file `.mmd`). Dưới đây là mã
+Ảnh PNG chi tiết nằm ở `docs/class-diagram.png` (vẽ từ file `class-diagram.dot`). Dưới đây là mã
 Mermaid, GitHub tự dựng hình khi xem online:
 
 ```mermaid
@@ -63,8 +64,11 @@ classDiagram
         +GetUnit() string
     }
     class LegacySmokeDetector {
+        <<sealed>>
+        +LegacySmokeDetector(int smokeLevel)
         +GetSmokeLevel() int
-        +SetSmokeLevel(int) void
+        +GetDescription() string
+        +SetSmokeLevel(int value) void
     }
     class SmokeSensorAdapter {
         +ReadValue() double
@@ -210,8 +214,8 @@ sequenceDiagram
 ## 6. Trả lời câu hỏi thiết kế (phần A)
 
 1. **Adapter nên kế thừa hay chứa `LegacySmokeDetector`?** → **Chứa** (object adapter).
-   Lý do: giấu được API cũ, có thể thay bằng thiết bị cũ khác, và không bị ràng buộc vào
-   lớp cũ qua kế thừa.
+   Lý do: lớp cũ được khai báo `sealed` nên không kế thừa được; ngoài ra chứa thì giấu được
+   API cũ, có thể thay bằng thiết bị cũ khác, và không bị ràng buộc vào lớp cũ qua kế thừa.
 2. **`SensorMonitor` có nên biết `EmailAlertObserver` cụ thể không?** → **Không**. Monitor
    chỉ làm việc với `IAlertObserver`, nhờ vậy thêm/bớt loại observer không phải sửa monitor.
 3. **`Alarm` có cần tham chiếu tới `DoorController` không?** → **Không**. Mọi phối hợp đi qua

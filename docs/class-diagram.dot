@@ -1,0 +1,127 @@
+// Sơ đồ lớp Campus Safety Hub (render: dot -Tpng class-diagram.dot -o class-diagram.png)
+digraph CampusSafetyHub {
+  graph [rankdir=LR, fontname="DejaVu Sans", nodesep=0.35, ranksep=0.9, bgcolor="white", pad=0.3, dpi=170, newrank=true, compound=true];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=10];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#3a3a3a"];
+
+  subgraph cluster_sensors {
+    label=<<b>Sensors</b>>; fontsize=11; style="rounded,dashed"; color="#9aa7bf";
+    ISensor [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface»</i><br/><b>ISensor</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ ReadValue() : double<br align="left"/>+ GetUnit() : string<br align="left"/></td></tr></table>>];
+    Legacy [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5" color="#666666">
+      <tr><td><i>«sealed» (có sẵn)</i><br/><b>LegacySmokeDetector</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- smokeLevel : int<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ LegacySmokeDetector(smokeLevel : int)<br align="left"/>+ GetSmokeLevel() : int  [0..1000]<br align="left"/>+ GetDescription() : string<br align="left"/>+ SetSmokeLevel(value : int) : void<br align="left"/></td></tr></table>>];
+    Adapter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff4e5" color="#b3661a">
+      <tr><td><i>«sealed» «Adapter»</i><br/><b>SmokeSensorAdapter</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _legacyDetector : LegacySmokeDetector<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SmokeSensorAdapter(legacy)<br align="left"/>+ ReadValue() : double<br align="left"/>+ GetUnit() : string<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_alerts {
+    label=<<b>Alerts</b>>; fontsize=11; style="rounded,dashed"; color="#9aa7bf";
+    AlertEvent [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ee" color="#2e7d4f">
+      <tr><td><i>«sealed record»</i><br/><b>AlertEvent</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SensorName : string<br align="left"/>+ Value : double<br align="left"/>+ Unit : string<br align="left"/>+ Severity : string<br align="left"/>+ OccurredAt : DateTime<br align="left"/></td></tr></table>>];
+    Thresholds [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>AlertThresholds</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ WarningThreshold : double = 50<br align="left"/>+ CriticalThreshold : double = 70<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Classify(value : double) : string?<br align="left"/></td></tr></table>>];
+    Severity [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«static»</i><br/><b>AlertSeverity</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Warning = "WARNING"<br align="left"/>+ Critical = "CRITICAL"<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_monitoring {
+    label=<<b>Monitoring</b>>; fontsize=11; style="rounded,dashed"; color="#9aa7bf";
+    Monitor [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ee" color="#2e7d4f">
+      <tr><td><i>«sealed» «Subject»</i><br/><b>SensorMonitor</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _observers : List&lt;IAlertObserver&gt;<br align="left"/>- _thresholds : AlertThresholds<br align="left"/>- _errorWriter : TextWriter<br align="left"/>+ ObserverCount : int<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Attach(observer) : void<br align="left"/>+ Detach(observer) : bool<br align="left"/>+ CheckSensor(name, sensor : ISensor) : AlertEvent?<br align="left"/>- Notify(alertEvent) : void<br align="left"/></td></tr></table>>];
+    IAlertObserver [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface» «Observer»</i><br/><b>IAlertObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent : AlertEvent) : void<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_observers {
+    label=<<b>Observers</b>>; fontsize=11; style="rounded,dashed"; color="#9aa7bf";
+    Dashboard [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>DashboardObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+    Email [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>EmailAlertObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _to : string<br align="left"/>- _minSeverity : string<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+    Audit [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>AuditLogObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Entries : IReadOnlyList&lt;string&gt;<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+    Bridge [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f3eefc" color="#5b3fa8">
+      <tr><td><i>«sealed»</i><br/><b>EmergencyBridgeObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _mediator : IEmergencyMediator<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  }
+
+  subgraph cluster_emergency {
+    label=<<b>Emergency</b>>; fontsize=11; style="rounded,dashed"; color="#9aa7bf";
+    IMediator [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface» «Mediator»</i><br/><b>IEmergencyMediator</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Notify(sender : object, eventCode : string) : void<br align="left"/></td></tr></table>>];
+    Mediator [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f3eefc" color="#5b3fa8">
+      <tr><td><i>«sealed»</i><br/><b>EmergencyMediator</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _alarm : Alarm<br align="left"/>- _door : DoorController<br align="left"/>- _ventilation : VentilationController<br align="left"/>- _fireActive : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Notify(sender, eventCode) : void<br align="left"/>- HandleFireDetected(sender) : void<br align="left"/>- HandleAlarmReset() : void<br align="left"/></td></tr></table>>];
+    Component [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«abstract»</i><br/><b>EmergencyComponent</b></td></tr>
+      <tr><td align="left" border="1" sides="T"># Mediator : IEmergencyMediator?<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SetMediator(mediator) : void<br align="left"/></td></tr></table>>];
+    Alarm [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>Alarm</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsActive : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Activate() : void<br align="left"/>+ Reset() : void<br align="left"/></td></tr></table>>];
+    Door [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>DoorController</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsUnlocked : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ UnlockAll() : void<br align="left"/>+ LockAll() : void<br align="left"/></td></tr></table>>];
+    Vent [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>VentilationController</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsRunning : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Shutdown() : void<br align="left"/>+ Resume() : void<br align="left"/></td></tr></table>>];
+    Events [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«static»</i><br/><b>EmergencyEvents</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ FireDetected = "FIRE_DETECTED"<br align="left"/>+ AlarmReset = "ALARM_RESET"<br align="left"/></td></tr></table>>];
+  }
+
+  // Adapter
+  Adapter -> ISensor [style=dashed, arrowhead=empty];
+  Adapter -> Legacy  [arrowtail=odiamond, dir=back, label="chứa 1", arrowhead=vee];
+
+  // Monitor
+  Monitor -> ISensor    [style=dashed, arrowhead=vee, label="«use» đọc"];
+  Monitor -> Thresholds [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Monitor -> AlertEvent [style=dashed, arrowhead=vee, label="«create»"];
+  Monitor -> IAlertObserver [arrowtail=odiamond, dir=back, arrowhead=vee, label="0..*"];
+  Thresholds -> Severity [style=dashed, arrowhead=vee, label="«use»"];
+
+  // Observers
+  Dashboard -> IAlertObserver [style=dashed, arrowhead=empty];
+  Email     -> IAlertObserver [style=dashed, arrowhead=empty];
+  Audit     -> IAlertObserver [style=dashed, arrowhead=empty];
+  Bridge    -> IAlertObserver [style=dashed, arrowhead=empty];
+  Bridge    -> IMediator [arrowhead=vee, label="Notify(FIRE_DETECTED)"];
+
+  // Mediator
+  Mediator -> IMediator [style=dashed, arrowhead=empty];
+  Mediator -> Alarm [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Door  [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Vent  [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Events [style=dashed, arrowhead=vee, label="«use»"];
+  Alarm -> Component [arrowhead=empty];
+  Door  -> Component [arrowhead=empty];
+  Vent  -> Component [arrowhead=empty];
+  Component -> IMediator [arrowhead=vee, label="Mediator"];
+
+  {rank=same; Legacy; }
+  {rank=same; Adapter; ISensor;}
+}

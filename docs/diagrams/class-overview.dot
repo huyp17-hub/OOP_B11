@@ -1,0 +1,56 @@
+digraph G {
+  graph [rankdir=LR, fontname="DejaVu Sans", nodesep=0.4, ranksep=0.7, bgcolor="white", pad=0.25, dpi=200];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#3a3a3a"];
+
+  subgraph cluster_Sensors { label=<<b>Sensors</b>>; fontsize=12; style="rounded,dashed"; color="#9aa7bf";
+    ISensor [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#eef4ff" color="#555555"><tr><td><i>«interface»</i><br/><b>ISensor</b></td></tr></table>>];
+    Legacy [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#f5f5f5" color="#555555"><tr><td><i>«sealed» (có sẵn)</i><br/><b>LegacySmokeDetector</b></td></tr></table>>];
+    Adapter [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#fff4e5" color="#555555"><tr><td><i>«sealed» «Adapter»</i><br/><b>SmokeSensorAdapter</b></td></tr></table>>];
+  }
+  subgraph cluster_Alerts { label=<<b>Alerts</b>>; fontsize=12; style="rounded,dashed"; color="#9aa7bf";
+    AlertEvent [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#eaf7ee" color="#555555"><tr><td><i>«sealed record»</i><br/><b>AlertEvent</b></td></tr></table>>];
+    Thresholds [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>AlertThresholds</b></td></tr></table>>];
+    Severity [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«static»</i><br/><b>AlertSeverity</b></td></tr></table>>];
+  }
+  subgraph cluster_Monitoring { label=<<b>Monitoring</b>>; fontsize=12; style="rounded,dashed"; color="#9aa7bf";
+    Monitor [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#eaf7ee" color="#555555"><tr><td><i>«sealed» «Subject»</i><br/><b>SensorMonitor</b></td></tr></table>>];
+    IAlertObserver [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#eef4ff" color="#555555"><tr><td><i>«interface» «Observer»</i><br/><b>IAlertObserver</b></td></tr></table>>];
+  }
+  subgraph cluster_Observers { label=<<b>Observers</b>>; fontsize=12; style="rounded,dashed"; color="#9aa7bf";
+    Dashboard [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>DashboardObserver</b></td></tr></table>>];
+    Email [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>EmailAlertObserver</b></td></tr></table>>];
+    Audit [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>AuditLogObserver</b></td></tr></table>>];
+    Bridge [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#f3eefc" color="#555555"><tr><td><i>«sealed»</i><br/><b>EmergencyBridgeObserver</b></td></tr></table>>];
+  }
+  subgraph cluster_Emergency { label=<<b>Emergency</b>>; fontsize=12; style="rounded,dashed"; color="#9aa7bf";
+    IMediator [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#eef4ff" color="#555555"><tr><td><i>«interface» «Mediator»</i><br/><b>IEmergencyMediator</b></td></tr></table>>];
+    Mediator [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#f3eefc" color="#555555"><tr><td><i>«sealed»</i><br/><b>EmergencyMediator</b></td></tr></table>>];
+    Component [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«abstract»</i><br/><b>EmergencyComponent</b></td></tr></table>>];
+    Alarm [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>Alarm</b></td></tr></table>>];
+    Door [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>DoorController</b></td></tr></table>>];
+    Vent [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«sealed»</i><br/><b>VentilationController</b></td></tr></table>>];
+    Events [label=<<table border="1" cellborder="0" cellpadding="5" bgcolor="#ffffff" color="#555555"><tr><td><i>«static»</i><br/><b>EmergencyEvents</b></td></tr></table>>];
+  }
+  Adapter -> ISensor [style=dashed, arrowhead=empty];
+  Adapter -> Legacy [arrowtail=odiamond, dir=back, label="chứa 1", arrowhead=vee];
+  Monitor -> ISensor [style=dashed, arrowhead=vee, label="«use» đọc"];
+  Monitor -> Thresholds [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Monitor -> AlertEvent [style=dashed, arrowhead=vee, label="«create»"];
+  Monitor -> IAlertObserver [arrowtail=odiamond, dir=back, arrowhead=vee, label="0..*"];
+  Thresholds -> Severity [style=dashed, arrowhead=vee, label="«use»"];
+  Dashboard -> IAlertObserver [style=dashed, arrowhead=empty];
+  Email -> IAlertObserver [style=dashed, arrowhead=empty];
+  Audit -> IAlertObserver [style=dashed, arrowhead=empty];
+  Bridge -> IAlertObserver [style=dashed, arrowhead=empty];
+  Bridge -> IMediator [arrowhead=vee, label="Notify(FIRE_DETECTED)"];
+  Mediator -> IMediator [style=dashed, arrowhead=empty];
+  Mediator -> Alarm [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Door [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Vent [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Events [style=dashed, arrowhead=vee, label="«use»"];
+  Alarm -> Component [arrowhead=empty];
+  Door -> Component [arrowhead=empty];
+  Vent -> Component [arrowhead=empty];
+  Component -> IMediator [arrowhead=vee, label="Mediator"];
+}

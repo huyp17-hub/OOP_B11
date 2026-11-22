@@ -8,10 +8,12 @@ classDiagram
         +GetUnit() string
     }
     class LegacySmokeDetector {
-        -int _smokeLevel
+        <<sealed>>
+        -int smokeLevel
+        +LegacySmokeDetector(int smokeLevel)
         +GetSmokeLevel() int
-        +SetSmokeLevel(int) void
         +GetDescription() string
+        +SetSmokeLevel(int value) void
     }
     class SmokeSensorAdapter {
         <<sealed>>

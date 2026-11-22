@@ -1,0 +1,25 @@
+digraph G {
+  graph [rankdir=BT, fontname="DejaVu Sans", nodesep=0.4, ranksep=0.7, bgcolor="white", pad=0.25, dpi=200];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#3a3a3a"];
+
+  ISensor [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface»</i><br/><b>ISensor</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ ReadValue() : double<br align="left"/>+ GetUnit() : string<br align="left"/></td></tr></table>>];
+  Legacy [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f5f5f5" color="#666666">
+      <tr><td><i>«sealed» (có sẵn)</i><br/><b>LegacySmokeDetector</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- smokeLevel : int<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ LegacySmokeDetector(smokeLevel : int)<br align="left"/>+ GetSmokeLevel() : int  [0..1000]<br align="left"/>+ GetDescription() : string<br align="left"/>+ SetSmokeLevel(value : int) : void<br align="left"/></td></tr></table>>];
+  Adapter [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#fff4e5" color="#b3661a">
+      <tr><td><i>«sealed» «Adapter»</i><br/><b>SmokeSensorAdapter</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _legacyDetector : LegacySmokeDetector<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SmokeSensorAdapter(legacy)<br align="left"/>+ ReadValue() : double<br align="left"/>+ GetUnit() : string<br align="left"/></td></tr></table>>];
+  Monitor [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eaf7ee" color="#2e7d4f">
+      <tr><td><i>«sealed» «Subject»</i><br/><b>SensorMonitor</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _observers : List&lt;IAlertObserver&gt;<br align="left"/>- _thresholds : AlertThresholds<br align="left"/>- _errorWriter : TextWriter<br align="left"/>+ ObserverCount : int<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Attach(observer) : void<br align="left"/>+ Detach(observer) : bool<br align="left"/>+ CheckSensor(name, sensor : ISensor) : AlertEvent?<br align="left"/>- Notify(alertEvent) : void<br align="left"/></td></tr></table>>];
+  Adapter -> ISensor [style=dashed, arrowhead=empty];
+  Adapter -> Legacy [arrowtail=odiamond, dir=back, label="chứa 1", arrowhead=vee];
+  Monitor -> ISensor [style=dashed, arrowhead=vee, label="«use» đọc"];
+  {rank=same; Adapter; Legacy;}
+}

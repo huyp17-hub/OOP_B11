@@ -1,0 +1,47 @@
+digraph G {
+  graph [rankdir=BT, fontname="DejaVu Sans", nodesep=0.4, ranksep=0.7, bgcolor="white", pad=0.25, dpi=200];
+  node  [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#3a3a3a"];
+
+  Bridge [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f3eefc" color="#5b3fa8">
+      <tr><td><i>«sealed»</i><br/><b>EmergencyBridgeObserver</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _mediator : IEmergencyMediator<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Update(alertEvent) : void<br align="left"/></td></tr></table>>];
+  IMediator [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#eef4ff" color="#2f5597">
+      <tr><td><i>«interface» «Mediator»</i><br/><b>IEmergencyMediator</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Notify(sender : object, eventCode : string) : void<br align="left"/></td></tr></table>>];
+  Mediator [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#f3eefc" color="#5b3fa8">
+      <tr><td><i>«sealed»</i><br/><b>EmergencyMediator</b></td></tr>
+      <tr><td align="left" border="1" sides="T">- _alarm : Alarm<br align="left"/>- _door : DoorController<br align="left"/>- _ventilation : VentilationController<br align="left"/>- _fireActive : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Notify(sender, eventCode) : void<br align="left"/>- HandleFireDetected(sender) : void<br align="left"/>- HandleAlarmReset() : void<br align="left"/></td></tr></table>>];
+  Component [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«abstract»</i><br/><b>EmergencyComponent</b></td></tr>
+      <tr><td align="left" border="1" sides="T"># Mediator : IEmergencyMediator?<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ SetMediator(mediator) : void<br align="left"/></td></tr></table>>];
+  Alarm [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>Alarm</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsActive : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Activate() : void<br align="left"/>+ Reset() : void<br align="left"/></td></tr></table>>];
+  Door [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>DoorController</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsUnlocked : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ UnlockAll() : void<br align="left"/>+ LockAll() : void<br align="left"/></td></tr></table>>];
+  Vent [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«sealed»</i><br/><b>VentilationController</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ IsRunning : bool<br align="left"/></td></tr>
+      <tr><td align="left" border="1" sides="T">+ Shutdown() : void<br align="left"/>+ Resume() : void<br align="left"/></td></tr></table>>];
+  Events [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" bgcolor="#ffffff" color="#444444">
+      <tr><td><i>«static»</i><br/><b>EmergencyEvents</b></td></tr>
+      <tr><td align="left" border="1" sides="T">+ FireDetected = "FIRE_DETECTED"<br align="left"/>+ AlarmReset = "ALARM_RESET"<br align="left"/></td></tr></table>>];
+  Bridge -> IMediator [arrowhead=vee, label="Notify(FIRE_DETECTED)"];
+  Mediator -> IMediator [style=dashed, arrowhead=empty];
+  Mediator -> Alarm [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Door [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Vent [arrowtail=odiamond, dir=back, arrowhead=vee, label="1"];
+  Mediator -> Events [style=dashed, arrowhead=vee, label="«use»"];
+  Alarm -> Component [arrowhead=empty];
+  Door -> Component [arrowhead=empty];
+  Vent -> Component [arrowhead=empty];
+  Component -> IMediator [arrowhead=vee, label="Mediator"];
+
+}

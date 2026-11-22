@@ -39,8 +39,7 @@ internal static class Program
     private static void RunDemo()
     {
         PrintHeader("1. Adapter: đọc cảm biến khói đời cũ qua giao diện chuẩn");
-        LegacySmokeDetector legacy = new();
-        legacy.SetSmokeLevel(735);
+        LegacySmokeDetector legacy = new(735);
         ISensor sensor = new SmokeSensorAdapter(legacy);
         Console.WriteLine(
             $"Cảm biến cũ mức 735 → đọc qua ISensor: {sensor.ReadValue():F1}{sensor.GetUnit()}");
